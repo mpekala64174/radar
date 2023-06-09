@@ -1,0 +1,98 @@
+@using Radar.Models
+@{
+    ViewData["Title"] = "Radar";
+}
+
+<div id="myMap" style="position:relative;width:100%;height:500px;"></div>
+
+<script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=@ViewData["BingMapsApiKey"]'></script>
+
+<script type='text/javascript'>
+    window.onload = function () {
+        var flightData = @Html.Raw(ViewData["FlightData"]);
+
+        var map = new Microsoft.Maps.Map('#myMap', {
+            credentials: '@ViewData["BingMapsApiKey"]'
+        });
+
+        var infobox = new Microsoft.Maps.Infobox(map.getCenter(), {
+            visible: false
+        });
+
+        infobox.setMap(map);
+        if (flightData.length === 1) {
+            var flight = flightData[0];
+            map.setView({
+                center: new Microsoft.Maps.Location(flight.Lat, flight.Lng),
+                zoom: 10
+            });
+        
+        for (var i = 0; i < flightData.length; i++) {
+            (function () {
+                var flight = flightData[i];
+
+                var pushpin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(flight.Lat, flight.Lng), {
+                    icon: getArrowIcon(flight.Dir),
+                    anchor: new Microsoft.Maps.Point(12, 12)
+                });
+
+                pushpin.metadata = flight;
+
+                Microsoft.Maps.Events.addHandler(pushpin, 'click', function (e) {
+                    var flight = e.target.metadata;
+                    infobox.setOptions({
+                        location: e.target.getLocation(),
+                        title: 'Flight Details',
+                        description: 'Icao: ' + flight.Icao + '<br>From-where: ' + flight.Dep + '-' + flight.Arr + '<br>Latitude: ' + flight.Lat + '<br>Longitude: ' + flight.Lng + '<br>Direction: ' + flight.Dir + '<br>Altitude: ' + flight.Alt
+                    });
+                    infobox.setOptions({ visible: true });
+                });
+
+                map.entities.push(pushpin);
+            })();
+        }
+        }
+        else {
+           const myMapElement = document.getElementById('myMap');
+myMapElement.innerHTML = '<h1 class="display-4">No flight found</h1><p class="lead" style="padding-bottom:20px">There is no flight with such ICAO code.</p>'; // Add the class "display-4" to the <h1> element
+
+// Center the text
+myMapElement.style.textAlign = 'center';
+
+const backButton = document.createElement('button');
+backButton.textContent = 'Try again';
+
+// Center the button
+backButton.style.display = 'block';
+backButton.style.margin = 'auto';
+backButton.classList.add('btn', 'btn-primary');
+
+backButton.addEventListener('click', () => {
+    window.location.href = '/icao';
+});
+
+myMapElement.appendChild(backButton);
+
+// Set margin-bottom for the <h1> element
+const h1Element = myMapElement.querySelector('h1');
+h1Element.style.marginBottom = '10px';
+h1Element.style.marginTop = '20px';
+        }
+        function getArrowIcon(direction) {
+            var canvas = document.createElement('canvas');
+            canvas.width = 24;
+            canvas.height = 24;
+            var context = canvas.getContext('2d');
+            context.translate(12, 12);
+            context.rotate((direction) * Math.PI / 180);
+            context.beginPath();
+            context.moveTo(0, -8);
+            context.lineTo(-3, 0);
+            context.lineTo(3, 0);
+            context.closePath();
+            context.fillStyle = 'red';
+            context.fill();
+            return canvas.toDataURL();
+        }
+    };
+</script>

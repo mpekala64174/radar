@@ -1,0 +1,28 @@
+@using Radar.Models
+@{
+ViewData["Title"] = "ICAO";
+}
+
+<div class="container-fluid">
+    <main role="main" class="pb-3">
+        <div class="jumbotron" style="text-align:center;">
+            <h1 class="display-4" style="padding-top:20px;">Find flight</h1>
+            <p class="lead">This application displays real-time data about given flight using the AirLabs API.</p>
+        </div>
+        <div>
+            <p>Here's how to use the app:</p>
+            <ul>
+                <li>Input ICAO number of the flight you would like to display.</li>
+                <li>Press search button to display current position and additional information about your flight of choice.</li>
+            </ul>
+            <p>Enjoy using the Find flight app!</p>
+        </div>
+        <div class="banner" style="text-align:center;">
+            <p>Input ICAO number here:</p>
+            <form action="/icao/details?icao_number=@ViewBag.IcaoNumber" method="get">
+                <input type="text" name="icao_number" value="@ViewBag.IcaoNumber" style="height:40px">
+                <input type="submit" value="Submit" class="btn btn-primary" style="margin-bottom:5px">
+            </form>
+        </div>
+    </main>
+</div>

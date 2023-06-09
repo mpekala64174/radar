@@ -1,0 +1,66 @@
+@using Radar.Models
+@{
+    ViewData["Title"] = "Radar";
+}
+
+<div id="myMap" style="position:relative;width:100%;height:500px;"></div>
+
+<script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=@ViewData["BingMapsApiKey"]'></script>
+
+<script type='text/javascript'>
+    window.onload = function() {
+    var flightData = @Html.Raw(ViewData["FlightData"]);
+
+    var map = new Microsoft.Maps.Map('#myMap', {
+        credentials: '@ViewData["BingMapsApiKey"]',
+        center: new Microsoft.Maps.Location(52.2297, 21.0122), 
+        zoom: 10 
+    });
+
+    var infobox = new Microsoft.Maps.Infobox(map.getCenter(), {
+        visible: false
+    });
+
+    infobox.setMap(map);
+
+    for (var i = 0; i < flightData.length; i++) {
+        var flight = flightData[i];
+
+        var pushpin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(flight.Lat, flight.Lng), {
+            icon: getArrowIcon(flight.Dir),
+            anchor: new Microsoft.Maps.Point(12, 12)
+        });
+
+        pushpin.metadata = flight;
+
+        Microsoft.Maps.Events.addHandler(pushpin, 'click', function (e) {
+            var flight = e.target.metadata;
+            infobox.setOptions({
+                location: e.target.getLocation(),
+                title: 'Flight Details',
+                description: 'From-where: ' + flight.Dep + '-' + flight.Arr +'<br>Latitude: ' + flight.Lat + '<br>Longitude: ' + flight.Lng + '<br>Direction: ' + flight.Dir + '<br>Altitude: ' + flight.Alt
+            });
+            infobox.setOptions({ visible: true });
+        });
+
+        map.entities.push(pushpin);
+    }
+
+    function getArrowIcon(direction) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 24;
+        canvas.height = 24;
+        var context = canvas.getContext('2d');
+        context.translate(12, 12);
+        context.rotate((flight.Dir) * Math.PI / 180);
+        context.beginPath();
+        context.moveTo(0, -8);
+        context.lineTo(-3, 0);
+        context.lineTo(3, 0);
+        context.closePath();
+        context.fillStyle = 'red';
+        context.fill();
+        return canvas.toDataURL();
+    }
+};
+</script>

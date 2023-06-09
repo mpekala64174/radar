@@ -1,0 +1,27 @@
+@using Radar.Models
+@{
+    ViewData["Title"] = "Strona Główna";
+}
+
+ <div class="container-fluid">
+        <main role="main" class="pb-3">
+            <div class="jumbotron" style="text-align:center;">
+                <h1 class="display-4" style="padding-top:20px;">Welcome to the Radar App!</h1>
+                <p class="lead">This application displays real-time flight data using the AirLabs API.</p>
+            </div>
+            <div>
+                <p>Here's how to use the app:</p>
+                    <ul>
+                        <li>When you load the page, you'll see a map that you can navigate by clicking and dragging.</li>
+                        <li>You'll also see red arrows on the map representing planes on the radar. Each arrow corresponds to a plane and shows its current location.</li>
+                        <li>If you click on an arrow, you'll see additional information about that plane. This includes the departure and arrival airports, as well as the latitude, longitude, and direction of the plane. This information can be useful if you're tracking a specific flight or just curious about the planes in the area.</li>
+                        <li>To view all the flights on the radar, click on the "Display Flights" button in the top navigation bar.</li>
+                    </ul>
+                <p>Enjoy using the Radar App!</p>
+            </div>
+            <div class="banner" style="text-align:center;">
+                <p>Click the button below to display flights on the radar:</p>
+                    <a href="/radar" class="btn btn-primary">Display all flights</a>
+            </div>
+        </main>
+    </div>
